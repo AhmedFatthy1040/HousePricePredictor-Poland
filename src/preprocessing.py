@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 
 def load_and_preprocess_data(file_path, save_path_prefix=''):
@@ -30,10 +30,16 @@ def load_and_preprocess_data(file_path, save_path_prefix=''):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+    sc = StandardScaler()
+    X_train_scaled = X_train
+    X_test_scaled = X_test
+    X_train_scaled[:, 3:] = sc.fit_transform(X_train[:, 3:])
+    X_test_scaled[:, 3:] = sc.transform(X_test[:, 3:])
+
     # Convert back to DataFrame for easy visualization
     column_names = ["Kraków_City", "Warszawa_City", "Poznañ_City", "floor", "rooms", "sq", "year"]
-    X_train_df = pd.DataFrame(X_train, columns=column_names).apply(lambda x: x.map('{:.2f}'.format))
-    X_test_df = pd.DataFrame(X_test, columns=column_names).apply(lambda x: x.map('{:.2f}'.format))
+    X_train_df = pd.DataFrame(X_train_scaled, columns=column_names).apply(lambda x: x.map('{:.2f}'.format))
+    X_test_df = pd.DataFrame(X_test_scaled, columns=column_names).apply(lambda x: x.map('{:.2f}'.format))
 
     # Save the preprocessed data to separate CSV files
     X_train_df.to_csv(f'{save_path_prefix}X_train.csv', index=False)
