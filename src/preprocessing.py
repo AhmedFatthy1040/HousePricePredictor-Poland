@@ -30,7 +30,7 @@ def load_and_preprocess_data(file_path, save_path_prefix=''):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Convert back to DataFrame for easy visualization (optional)
+    # Convert back to DataFrame for easy visualization
     column_names = ["Kraków_City", "Warszawa_City", "Poznañ_City", "floor", "rooms", "sq", "year"]
     X_train_df = pd.DataFrame(X_train, columns=column_names).apply(lambda x: x.map('{:.2f}'.format))
     X_test_df = pd.DataFrame(X_test, columns=column_names).apply(lambda x: x.map('{:.2f}'.format))
