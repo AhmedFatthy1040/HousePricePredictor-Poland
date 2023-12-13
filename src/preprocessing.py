@@ -13,6 +13,18 @@ def load_and_preprocess_data(file_path, save_path_prefix=''):
     # Drop unnecessary columns for now
     dataset = dataset.drop(['id', 'address', 'latitude', 'longitude'], axis=1)
 
+    # Check for outliers in the 'price' column
+    Q1 = dataset['price'].quantile(0.25)
+    Q3 = dataset['price'].quantile(0.75)
+    IQR = Q3 - Q1
+
+    # Define the lower and upper bounds for outliers
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    # Remove outliers
+    dataset = dataset[(dataset['price'] > lower_bound) & (dataset['price'] < upper_bound)]
+
     # Separate features (X) and target variable (y)
     X = dataset.drop('price', axis=1)
     y = dataset['price']
